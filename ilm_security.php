@@ -110,7 +110,7 @@ class ilm_security {
     $newentry->view = 1;
     $id_iLM_security = $DB->insert_record("iassign_security", $newentry); // insert into {iassign_security}
     if (!$id_iLM_security) {
-      print_error('error_security', 'iassign'); // ./lib/setuplib.php: moodle_exception thrown
+      throw new \moodle_exception('error_security', 'iassign'); // ./lib/setuplib.php: moodle_exception thrown
       }
     return $id_iLM_security;
     }

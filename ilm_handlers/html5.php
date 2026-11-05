@@ -1078,7 +1078,7 @@ else echo "ilm_handlers/html5.php!delete_ilm(.): else k==0, ilm_id=" . $ilm_id .
 
       if (empty($file_jar)) {
         $msg_error = get_string('error_add_ilm', 'iassign') . "<br/>In new_ilm: file_jar empty, files_extract=" . $files_extract . "<br/>\n";
-        print_error($msg_error);
+        throw new \moodle_exception('error_add_ilm', 'iassign', '', null, $msg_error);
         //xx print_error('error_add_ilm', 'iassign');
         //print("New file = " . file_jar . "<br/>");
         }
@@ -1130,7 +1130,7 @@ else echo "ilm_handlers/html5.php!delete_ilm(.): else k==0, ilm_id=" . $ilm_id .
             $newentry->visible = (String) $value->visible;
             $newentry->id = $DB->insert_record("iassign_ilm", $newentry); //2023/05/08 //leo voltar
             if (!$newentry->id) {
-              print_error('error_add_param', 'iassign');
+              throw new \moodle_exception('error_add_param', 'iassign');
               }
             }
           } // if ($iassign_ilm_instance->params->param)
@@ -1216,7 +1216,7 @@ echo " - completado file_jar=" . $file_jar. "<br/>\n"; //2025/04/11 leo
       // $file_jar = html5::adjust_File_jar($file_jar); // do not use tag 'file_jar' from 'ilm-application.xml', use actual directory name
       if (empty($file_jar)) {
         $msg_error = get_string('error_add_ilm', 'iassign') . "<br/>In import_ilm: file_jar empty, files_extract=" . $files_extract . "<br/>\n";
-        print_error($msg_error); //xx print_error('error_add_ilm', 'iassign'); //D print("Import file = " . file_jar . "<br/>");  
+        throw new \moodle_exception('error_add_ilm', 'iassign', '', null, $msg_error); //xx print_error('error_add_ilm', 'iassign'); //D print("Import file = " . file_jar . "<br/>");  
         }
       else { // if (empty($file_jar))
         $iassign_ilm = $DB->get_record('iassign_ilm', array("parent" => 0, "name" => $ilm_xml_name));
@@ -1263,7 +1263,7 @@ echo " - completado file_jar=" . $file_jar. "<br/>\n"; //2025/04/11 leo
             $newentry->id = $DB->insert_record("iassign_ilm", $newentry);
 
             if (!$newentry->id) {
-              print_error('error_add_param', 'iassign');
+              throw new \moodle_exception('error_add_param', 'iassign');
               }
             }
           } // if ($application_xml->params->param)

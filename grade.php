@@ -24,27 +24,27 @@ $url = new moodle_url('/mod/iassign/view.php'); // novo
 
 if ($id) {
   if (!$cm = get_coursemodule_from_id('iassign', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
     }
 
   if (!$iassign = $DB->get_record("iassign", array("id" => $cm->instance))) {
-    print_error('invalidid', 'iassign');
+    throw new \moodle_exception('invalidid', 'iassign');
     }
 
   if (!$course = $DB->get_record("course", array("id" => $iassign->course))) {
-    print_error('coursemisconf', 'iassign');
+    throw new \moodle_exception('coursemisconf', 'iassign');
     }
   $url->param('id', $id);
   }
 else {
   if (!$iassign = $DB->get_record("iassign", array("id" => $a))) {
-    print_error('invalidid', 'iassign');
+    throw new \moodle_exception('invalidid', 'iassign');
     }
   if (!$course = $DB->get_record("course", array("id" => $iassign->course))) {
-    print_error('coursemisconf', 'iassign');
+    throw new \moodle_exception('coursemisconf', 'iassign');
     }
   if (!$cm = get_coursemodule_from_instance("iassign", $iassign->id, $course->id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
     }
   $url->param('a', $a);
   }

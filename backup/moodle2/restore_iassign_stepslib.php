@@ -466,7 +466,7 @@ class restore_iassign_activity_structure_step extends restore_activity_structure
               $newentry->id = $iassign_statement->id;
               $newentry->filesid = $choosen_file->id;
 //2023--- line bellow was commented!
-              if (!$DB->update_record("iassign_statement", $newentry)) print_error('error_update', 'iassign'); // update 'iassign_statement' : filesid <- {files}.id'
+              if (!$DB->update_record("iassign_statement", $newentry)) throw new \moodle_exception('error_update', 'iassign'); // update 'iassign_statement' : filesid <- {files}.id'
               $msgD .= " " . " - Update {iassign_statement}.id=" . $newentry->id . ", filesid=" . $iassign_statement->filesid . " <- " . $newentry->filesid . "; \n"; //D
               }
             else $msgD .= " " . " - OK! To {iassign_statement}.id=" . $newentry->id . " : filesid=" . $iassign_statement->filesid . " = " . $choosen_file->id . "; \n"; //D
@@ -482,7 +482,7 @@ class restore_iassign_activity_structure_step extends restore_activity_structure
               $msgD .= " " . " - Update {files.itemid}: id=" . $newentry->id . ", itemid=" . $choosen_file->itemid . "<-" . $newentry->itemid . "\n"; //D
 
 //2023--- line bellow was commented!
-              if (!$DB->update_record('files', $newentry)) print_error('error_update', 'iassign'); // atualiza {files}.itemid := {iassign_statement}.id
+              if (!$DB->update_record('files', $newentry)) throw new \moodle_exception('error_update', 'iassign'); // atualiza {files}.itemid := {iassign_statement}.id
 
               }
             else $msgD .= " " . " - OK! To {iassign_statement}.id=" . $newentry->id . " : itemid=" . $choosen_file->itemid . " = " . $iassign_statement->id . "; \n"; //D

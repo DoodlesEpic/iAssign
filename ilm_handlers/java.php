@@ -153,7 +153,7 @@ class java implements ilm_handle {
             break;
 
           default:
-            print_error('error_view_without_actiontype', 'iassign'); //
+            throw new \moodle_exception('error_view_without_actiontype', 'iassign'); //
           }
         $html .= '</applet> <br/>' . "\n";
         } // if (!empty($file_url))
@@ -709,7 +709,7 @@ class java implements ilm_handle {
       $file_jar = self::save_ilm_by_xml($application_xml, $files_extract);
 
       if (empty($file_jar))
-        print_error('error_add_ilm', 'iassign');
+        throw new \moodle_exception('error_add_ilm', 'iassign');
       else { // if (empty($file_jar))
         $iassign_ilm = $DB->get_record('iassign_ilm', array("parent" => 0, "name" => (String) $application_xml->name));
         if (!$iassign_ilm) {
@@ -757,7 +757,7 @@ class java implements ilm_handle {
             $newentry->id = $DB->insert_record("iassign_ilm", $newentry);
 
             if (!$newentry->id) {
-              print_error('error_add_param', 'iassign');
+              throw new \moodle_exception('error_add_param', 'iassign');
               }
             }
           }
@@ -790,7 +790,7 @@ class java implements ilm_handle {
       $file_jar = self::save_ilm_by_xml($application_xml, $files_extract);
 
       if (empty($file_jar))
-        print_error('error_add_ilm', 'iassign');
+        throw new \moodle_exception('error_add_ilm', 'iassign');
       else { // if (empty($file_jar))
         $iassign_ilm = $DB->get_record('iassign_ilm', array("parent" => 0, "name" => (String) $application_xml->name));
         if (!$iassign_ilm) {
@@ -831,7 +831,7 @@ class java implements ilm_handle {
             $newentry->id = $DB->insert_record("iassign_ilm", $newentry);
 
             if (!$newentry->id) {
-              print_error('error_add_param', 'iassign');
+              throw new \moodle_exception('error_add_param', 'iassign');
               }
             }
           }

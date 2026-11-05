@@ -30,7 +30,6 @@
 require_once("../../config.php");
 require_once("lib.php");
 require_once($CFG->libdir . '/completionlib.php'); // $completion = new completion_info($course); $completion->set_module_viewed($cm);
-require_once($CFG->libdir . '/plagiarismlib.php');
 
 
 //DEBUG To be used in debug process, mainlly when 'view.php' is called by JavaScript (e.g. during send comment, call evaluation)
@@ -109,17 +108,17 @@ if ($id) {
   $cm = get_coursemodule_from_id('iassign', $id);
 
   if (!$cm) { // Moodle function 'get_coursemodule_from_id(...)' returns the object from table '*_iassign_statement'
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
     }
 
   $iassign = $DB->get_record("iassign", array("id" => $cm->instance));
   if (!$iassign) { // 'course_modules.instance = iassign.id'
-    print_error('invalidid', 'iassign');
+    throw new \moodle_exception('invalidid', 'iassign');
     }
 
   $course = $DB->get_record("course", array("id" => $iassign->course));
   if (!$course) {
-    print_error('coursemisconf', 'iassign');
+    throw new \moodle_exception('coursemisconf', 'iassign');
     }
   $mood_url->param('id', $id);
   }
@@ -133,15 +132,15 @@ else {
     }
   $iassign = $DB->get_record("iassign", array("id" => $a));
   if (!$iassign) {
-    print_error('invalidid', 'iassign');
+    throw new \moodle_exception('invalidid', 'iassign');
     }
   $course = $DB->get_record("course", array("id" => $iassign->course));
   if (!$course) {
-    print_error('coursemisconf', 'iassign');
+    throw new \moodle_exception('coursemisconf', 'iassign');
     }
   $cm = get_coursemodule_from_instance("iassign", $iassign->id, $course->id);
   if (!$cm) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
     }
   $mood_url->param('a', $a);
   }

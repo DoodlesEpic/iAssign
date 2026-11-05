@@ -199,7 +199,7 @@ class mod_iassign_mod_form extends moodleform_mod {
             $updateentry->max_experiment = $data['max_experiment'];
 
           if (!$DB->update_record("iassign_statement", $updateentry))
-            print_error('error_update', 'iassign');
+            throw new \moodle_exception('error_update', 'iassign');
           }
         }
       }

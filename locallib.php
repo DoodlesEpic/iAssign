@@ -206,7 +206,7 @@ class iassign {
       $this->course = $COURSE;
       }
     else if (!$this->course = $DB->get_record('course', array('id' => $this->cm->course))) {
-      print_error('invalidid', 'iassign');
+      throw new \moodle_exception('invalidid', 'iassign');
       }
     $this->coursecontext = context_course::instance($this->course->id);
 
@@ -214,7 +214,7 @@ class iassign {
       $this->iassign = $iassign;
       }
     else if (!$this->iassign = $DB->get_record('iassign', array('id' => $this->cm->instance))) {
-      print_error('invalidid', 'iassign');
+      throw new \moodle_exception('invalidid', 'iassign');
       }
 
     $USER->context = context_module::instance($this->cm->id);
@@ -228,7 +228,7 @@ class iassign {
     $this->return = $CFG->wwwroot . "/mod/iassign/view.php?id=" . $this->cm->id;
     $this->allowPostButton = 0; // hide submit button
     $this->view_iassign = optional_param('action', false, PARAM_BOOL);
-    $this->activity = new activity(optional_param('iassign_current', NULL, PARAM_TEXT)); // this is the activity inside iAssign block (content file)
+    $this->activity = new activity(optional_param('iassign_current', 0, PARAM_INT)); // this is the activity inside iAssign block (content file)
 
     $this->view();
     } // function __construct($iassign, $cm, $course)
@@ -292,7 +292,7 @@ class iassign {
     if ($this->activity!=null && $this->activity->get_activity()!=null && isset($this->activity->get_activity()->id))
       $iassign_statementid = $this->activity->get_activity()->id;
     else
-      $iassign_statementid = "";
+      $iassign_statementid = 0;
 
     // '$this' has : iassign Object = cm ; course ; iassign ; striassign ; striassigns ; context ; activity ; iassign_up ; iassign_down ; action ; ... ; coursecontext ; return
     // If this user has no capability to View 'iassign': stop here
@@ -412,7 +412,7 @@ class iassign {
       // Capabilities 'mod/iassign:editiassign' and 'mod/iassign:editiassign' are similar, the first one is more permissive
       // allowing 'teacher' (the second starts with 'editingteacher').
       // redirect(new moodle_url('/admin/index.php'));
-      print_error('accessdenied', 'admin', $CFG->wwwroot . "/" . $CFG->admin); // ./lang/en/admin.php: "Access denied"
+      throw new \moodle_exception('accessdenied', 'admin', $CFG->wwwroot . "/" . $CFG->admin); // ./lang/en/admin.php: "Access denied"
       exit; // additional security...
       // $this->userid_iassign = $USER->id;
       }
@@ -1775,7 +1775,7 @@ class iassign {
       if ($answer_array==NULL) {
         //x print_error('invalidid', 'iassign'); // $string['invalidid'] = 'Invalid ID';
         // print($OUTPUT->notification(get_string('error_view_ilm', 'iassign'), 'notifyproblem')); --- other option, to present msg a frame (on the same page)
-        print_error('error_view_ilm', 'iassign'); // Error: exercise file not found. Inform the teacher of the course.  
+        throw new \moodle_exception('error_view_ilm', 'iassign'); // Error: exercise file not found. Inform the teacher of the course.  
         exit;
         }
       $f1_obj = $answer_array[0]; // regular 'filename'
@@ -1808,11 +1808,11 @@ class iassign {
         if (!$DB->update_record("iassign_statement", $new_iassign_statement)) {
           // print_error('error_update_move_iassign', 'iassign');
           // print($OUTPUT->notification(get_string('error_add_ilm_zip', 'iassign'), 'notifyproblem'));
-          print_error('error_file_dupl_1', 'iassign'); // Error: it was not possible to duplicate this file, perhaps it already exists!
+          throw new \moodle_exception('error_file_dupl_1', 'iassign'); // Error: it was not possible to duplicate this file, perhaps it already exists!
           }
         } // if ($f1_obj!=null) - f1_obj in {files}
       else { //DEBUG 
-        print_error('error_file_not_exists', 'iassign'); // '<font color="red">Error: file not existing!!</font>'
+        throw new \moodle_exception('error_file_not_exists', 'iassign'); // '<font color="red">Error: file not existing!!</font>'
         }
 
       } //  if ($new_iassign_statement_id = $DB->insert_record("iassign_statement", $new_iassign_statement))
@@ -2232,7 +2232,7 @@ class iassign {
         $newentry->experiment = 1;
 
         if (!$newentry->id = $DB->insert_record("iassign_submission", $newentry)) {
-          print_error('error_insert', 'iassign');
+          throw new \moodle_exception('error_insert', 'iassign');
         } else {
           // Trigger module viewed event.
           $event = \mod_iassign\event\submission_created::create(array(
@@ -2257,7 +2257,7 @@ class iassign {
         $newentry->status = $status;
         $newentry->experiment = $iassign_submission->experiment + 1;
         if (!$DB->update_record("iassign_submission", $newentry)) {
-          print_error('error_update', 'iassign');
+          throw new \moodle_exception('error_update', 'iassign');
           //D depurar...
           //D $stringAux = "ia.class.php: ".$iLM_PARAM_ArchiveContent."<br/> ".utf8_encode($iLM_PARAM_ArchiveContent)."<br/>".utf8_encode(utf8_encode($iLM_PARAM_ArchiveContent))."<br/>";
           //D $fp = fopen("teste1.txt","w");
@@ -2287,7 +2287,7 @@ class iassign {
           $newentry->status = $status;
           $newentry->experiment = $iassign_submission->experiment + 1;
           if (!$DB->update_record("iassign_submission", $newentry))
-            print_error('error_update', 'iassign');
+            throw new \moodle_exception('error_update', 'iassign');
           else {
             $event = \mod_iassign\event\submission_updated::create(array(
               'objectid' => $this->iassign->id,
@@ -2489,7 +2489,7 @@ class iassign {
       }
     $zip_filename = $directory . 'package_iassign_' . $username . strtolower($iassign_block_name) . '_' . $current_date . '.zip';
     if (!is_writable($directory)) { // send a highlighted message!
-      print_error('error_answer_export_dir', 'iassign'); // Error: the target directory has no permission! Please, send this message to the Moodle admin!
+      throw new \moodle_exception('error_answer_export_dir', 'iassign'); // Error: the target directory has no permission! Please, send this message to the Moodle admin!
       exit; // just in case
       }
 
@@ -2533,7 +2533,7 @@ class iassign {
             $vet_student_content[] = $student_content;
             }
           else { // send a highlighted message!
-            print_error('error_answer_export_file', 'iassign'); // Error: fail to insert content to the file
+            throw new \moodle_exception('error_answer_export_file', 'iassign'); // Error: fail to insert content to the file
             exit; // just in case
             }
           }
@@ -2567,7 +2567,7 @@ class iassign {
 
     $newentry->teacher = $USER->id;
     if (!$DB->update_record('iassign_submission', $newentry))
-      print_error('error_update', 'iassign');
+      throw new \moodle_exception('error_update', 'iassign');
     else {
       // Trigger module viewed event.
       $event = \mod_iassign\event\submission_updated::create(array(
@@ -2596,7 +2596,7 @@ class iassign {
       $newentry->grade = optional_param('return_grade', 0, PARAM_INT);
       $newentry->teacher = $USER->id;
       if (!$DB->update_record('iassign_submission', $newentry))
-        print_error('error_update', 'iassign');
+        throw new \moodle_exception('error_update', 'iassign');
       else {
         // Trigger module viewed event.
         $event = \mod_iassign\event\submission_updated::create(array(
@@ -5820,7 +5820,7 @@ class iassign {
             $newentry->id = $message->id;
             $newentry->return_status = 1;
             if (!$DB->update_record('iassign_submission_comment', $newentry)) {
-                print_error('error_update', 'iassign');
+                throw new \moodle_exception('error_update', 'iassign');
               } // if (!$DB->update_record('iassign_submission_comment', $newentry))
           } // if ($message->receiver == $receiver)
         // Trigger module viewed event.
@@ -5985,7 +5985,7 @@ class activity {
 
   function __construct ($id) {
     global $DB;
-    $this->activity = $DB->get_record("iassign_statement", array("id" => $id));
+    $this->activity = $id ? $DB->get_record("iassign_statement", array("id" => $id)) : null;
     if (empty($this->activity))
       $this->activity = null;
     }
@@ -6097,14 +6097,14 @@ class activity {
     $newentry->id = $idFrom; // ID of the "source activity" //1 $this->activity->id -> $idFrom
     $newentry->position = $posFrom; // final position to source //1 $final_position_source -> $posFrom
     if (!$DB->update_record('iassign_statement', $newentry)) { // modify 'position' of the activity with 'id'=$target
-      print_error('error_update_move_iassign', 'iassign');
+      throw new \moodle_exception('error_update_move_iassign', 'iassign');
       }
     // If $idFrom == $idTo then came here from 'this->show_iassign(.)' above, to correct order!
     if ($idFrom != $idTo) { // if $idFrom != $idTo then must update also the targe position
       $newentry->id = $idTo; //1 $iassign_target->id -> $idTo
       $newentry->position = $posTo; //1 $final_position_target -> $posTo
       if (!$DB->update_record('iassign_statement', $newentry))
-        print_error('error_update_move_iassign', 'iassign');
+        throw new \moodle_exception('error_update_move_iassign', 'iassign');
       }
     }
 
@@ -6131,7 +6131,7 @@ class activity {
       $final_position_source = $final_position_target - 1;
       }
     else { // error:
-      print_error('error_update_move_iassign', 'iassign');
+      throw new \moodle_exception('error_update_move_iassign', 'iassign');
       exit;
       }
 
@@ -6148,7 +6148,7 @@ class activity {
     $newentry->id = $this->activity->id;
     $newentry->visible = $this->activity->visible == 0 ? 1 : 0;
     if (!$DB->update_record('iassign_statement', $newentry))
-      print_error('error_update_visible_iassign', 'iassign');
+      throw new \moodle_exception('error_update_visible_iassign', 'iassign');
     redirect($return);
     }
 
@@ -6250,7 +6250,7 @@ class activity {
       $updateentry->id = $new_iassign_statement_id;
       $updateentry->filesid = $newfile_fs->get_id(); // {iassign_statement}.filesid must have {files}.id
       if (!$DB->update_record("iassign_statement", $updateentry))
-        print_error('error_add', 'iassign');
+        throw new \moodle_exception('error_add', 'iassign');
 
       if ($param->type_iassign == 3)
         iassign::update_grade_iassign($param->iassignid);
@@ -6277,7 +6277,7 @@ class activity {
       return $new_iassign_statement_id;
       }
     else
-      print_error('error_add', 'iassign');
+      throw new \moodle_exception('error_add', 'iassign');
     } // function new_iassign($param)
 
 
@@ -6586,7 +6586,7 @@ if ($USER->id==3) { // - only {user}.id==3 sees it
     $newentry->show_answer = $param->show_answer;
 
     if (!$DB->update_record("iassign_statement", $newentry))
-      print_error('error_update', 'iassign');
+      throw new \moodle_exception('error_update', 'iassign');
 
     if ($param->type_iassign == 3) {
       iassign::update_grade_iassign($param->iassignid);
@@ -6858,7 +6858,7 @@ class ilm {
     $newentry->view = 1;
     $id_iLM_security = $DB->insert_record("iassign_security", $newentry);
     if (!$id_iLM_security) {
-      print_error('error_security', 'iassign'); // ./lib/setuplib.php: moodle_exception thrown
+      throw new \moodle_exception('error_security', 'iassign'); // ./lib/setuplib.php: moodle_exception thrown
       } // from (!$DB->insert_record("iassign_security", $newentry))
 
     return $id_iLM_security;
@@ -7276,7 +7276,7 @@ class ilm_settings {
     $newentry->enable = $visible;
 
     if (!$DB->update_record("iassign_ilm", $newentry))
-      error(get_string('error_edit_ilm', 'iassign'));
+      throw new \moodle_exception('error_edit_ilm', 'iassign');
     }
 
 
@@ -7318,13 +7318,13 @@ class ilm_settings {
     $iassign_ilm_default->enable = 1;
 
     if (!$DB->update_record("iassign_ilm", $iassign_ilm_default)) {
-      print_error('error_edit_ilm', 'iassign');
+      throw new \moodle_exception('error_edit_ilm', 'iassign');
       }
 
     $inserted = $DB->insert_record("iassign_ilm", $iassign_ilm);
     if (!$inserted) {
       $msg_error = get_string('error_add_ilm', 'iassign') . "<br/>In default_ilm(" . $ilm_id . ")<br/>\n";
-      print_error($msg_error);
+      throw new \moodle_exception('error_add_ilm', 'iassign', '', null, $msg_error);
       //xx print_error('error_add_ilm', 'iassign');
       }
 
@@ -7741,7 +7741,7 @@ class ilm_settings {
     // class ilm_settings : function build_ilm_tags ($ilm_id, $options=array()): 6545/9615 ; $typec::build_ilm_tags(...)
 
     if (!$result)
-      print_error('error_upgrade_ilm', 'iassign');
+      throw new \moodle_exception('error_upgrade_ilm', 'iassign');
     else {
       $zip_filename = $CFG->dataroot . $df . 'temp' . $df . $update_xml->file;
       $extension = explode(".", $zip_filename);
@@ -7767,7 +7767,7 @@ class ilm_settings {
 
       if (empty($file_jar)) {
         $msg_error = get_string('error_add_ilm', 'iassign') . "<br/>In upgrade_ilm(" . $ilm_id . ")<br/>\n";
-        print_error($msg_error);
+        throw new \moodle_exception('error_add_ilm', 'iassign', '', null, $msg_error);
         //xx print_error('error_add_ilm', 'iassign');
         }
       else {
@@ -7894,7 +7894,7 @@ class ilm_settings {
     $newentry->visible = $visible;
 
     if (!$DB->update_record("iassign_ilm_config", $newentry))
-      error(get_string('error_edit_param', 'iassign'));
+      throw new \moodle_exception('error_edit_param', 'iassign');
     }
 
 
@@ -7918,7 +7918,7 @@ class ilm_settings {
 
     $newentry->id = $DB->insert_record("iassign_ilm_config", $newentry);
     if (!$newentry->id) {
-      print_error('error_add_param', 'iassign');
+      throw new \moodle_exception('error_add_param', 'iassign');
       }
     }
 
@@ -7945,7 +7945,7 @@ class ilm_settings {
     $updentry->visible = $param->visible;
 
     if (!$DB->update_record("iassign_ilm_config", $updentry)) {
-      error(get_string('error_edit_param', 'iassign'));
+      throw new \moodle_exception('error_edit_param', 'iassign');
       }
     }
 
@@ -7970,7 +7970,7 @@ class ilm_settings {
 
     $newentry->id = $DB->insert_record("iassign_ilm_config", $newentry);
     if (!$newentry->id) {
-      print_error('error_add_param', 'iassign');
+      throw new \moodle_exception('error_add_param', 'iassign');
       }
     }
 
@@ -7981,7 +7981,7 @@ class ilm_settings {
     global $DB;
 
     if (!$DB->delete_records("iassign_ilm_config", array('id' => $param_id))) {
-      print_error('error_delete_param', 'iassign');
+      throw new \moodle_exception('error_delete_param', 'iassign');
       }
     }
 
