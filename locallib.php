@@ -9942,22 +9942,22 @@ class iassign_log {
 
     $newentry = new stdClass();
     $newentry->time = time();
-    $newentry->userid = $USER->id;
-    $newentry->ip = $_SERVER['REMOTE_ADDR'];
-    $newentry->course = $COURSE->id;
+    $newentry->userid = $USER->id ?? 0;
+    $newentry->ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $newentry->course = $COURSE->id ?? 0;
     $newentry->cmid = $cmid;
     $newentry->ilmid = $ilmid;
     $newentry->action = $action;
     $newentry->info = $information;
     $newentry->language = current_language();
-    $newentry->user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $newentry->user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'CLI';
     if (ini_get("browscap") && function_exists('get_browse')) {
       $browser = get_browse(null, true);
       $newentry->javascript = $browser['javascript'];
       $newentry->java = $browser['javaapplets'];
       }
     if (!$newentry->id = $DB->insert_record("iassign_log", $newentry))
-      print_error('error_add_log', 'iassign');
+      throw new \moodle_exception('error_add_log', 'iassign');
     } // static function add_log($action, $information = "", $cmid = 0, $ilmid = 0)
 
   } // class iassign_log

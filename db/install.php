@@ -160,17 +160,17 @@ function xmldb_iassign_install () {
 
     if ($error == 1) {
       // $string['error_security_no_userid']       = 'Internal error: must be informed the user identification. Inform the Administrator.';
-      print '<div class="alert alert-warning alert-block fade in " role="alert" data-aria-autofocus="true" tabindex="0" >' + "\n";
+      print '<div class="alert alert-warning alert-block fade in " role="alert" data-aria-autofocus="true" tabindex="0" >' . "\n";
       print get_string('error_security_no_userid', 'iassign'); // Internal error: must be informed the user identification. Inform the Administrator
-      // print '<a href="'.new moodle_url('/admin/settings.php?section=modsettingiassign').'">' . get_string('upgrade_alert_iMA_solution_pt2', 'iassign') . '</a>.' + "\n";
-      print '</div>' + "\n";
+      // print '<a href="'.new moodle_url('/admin/settings.php?section=modsettingiassign').'">' . get_string('upgrade_alert_iMA_solution_pt2', 'iassign') . '</a>.' . "\n";
+      print '</div>' . "\n";
       }
     else { // $string['cliinstallfinished'] = 'Installation completed successfully.';
       print '<div class="modal-content"><p>' . get_string('cliinstallfinished', 'install') . '</p>' . "\n";
       print ' <ul style="margin-top: 1rem;">' . "\n";
       print $strInstalled_iLM;
       print ' </ul>' . "\n";
-      print '</div' . "\n";;
+      print '</div>' . "\n";
       }
 
     // Create $CFG->dataroot/temp/iassign_files
