@@ -1,0 +1,4 @@
+# Local environment and build artifacts
+.env
+*.log
+.DS_Store
