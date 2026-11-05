@@ -16,23 +16,20 @@
 /**
  * Moodle core defines constant MOODLE_INTERNAL which shall be used to make sure that the script is included and not called directly.
  */
-if(!defined('MOODLE_INTERNAL')) {
-  die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
-
 require_once("../../config.php");
 require_once("lib.php");
 require_once($CFG->libdir . '/gradelib.php');
 
 $id = required_param('id', PARAM_INT);   // course
 
-if(!$course = $DB->get_record('course', array('id' => $id))) {
-  print_error('invalidcourseid');
+if (!$course = $DB->get_record('course', array('id' => $id))) {
+  throw new \moodle_exception('invalidcourseid');
 }
 
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
-add_to_log($course->id, "iassign", "view all", "index.php?id=$course->id", "");
+$event = \mod_iassign\event\course_module_instance_list_viewed::create_from_course($course);
+$event->trigger();
 
 
 /// Get all required stringsia

@@ -71,18 +71,6 @@ class submission_comment_created extends \core\event\base {
   }
 
   /**
-   * Return the legacy event log data.
-   *
-   * @return array|null
-   */
-  public function get_legacy_logdata () {
-
-    return array($this->courseid, 'iassign', 'add comment',
-      "view.php?id={$this->contextinstanceid}",
-      $this->objectid, $this->contextinstanceid);
-  }
-
-  /**
    * Custom validation.
    *
    * @throws \coding_exception
@@ -91,7 +79,7 @@ class submission_comment_created extends \core\event\base {
   protected function validate_data () {
     parent::validate_data();
     // Make sure this class is never used without proper object details.
-    if(!$this->contextlevel === CONTEXT_MODULE) {
+    if ($this->contextlevel !== CONTEXT_MODULE) {
       throw new \coding_exception('Context level must be CONTEXT_MODULE.');
     }
   }
